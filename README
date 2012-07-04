@@ -1,0 +1,23 @@
+rpmkeeper - Find unused RPM packages
+
+rpmkeeper helps you keep your RPM system clean, similarly to debfoster for Debian-based systems. It's easy to install packages that you no longer need, but it's hard to remember which packages these were afterwards. It's even harder to remember what dependencies they brought in.
+
+With rpmkeeper, you just maintain a 'keepers' list of the packages you care about. You only need to list leaf packages, not all the libraries they depend on. Running rpmkeeper will list any installed packages that aren't needed for the keepers. You can add these to your keepers list if you still want them, or remove the packages.
+
+A quick way to remove all unkept packages:
+# while yum remove $(rpmkeeper); do true; done
+
+You can put one or more keeper lists in your ~/keepers/ directory, and rpmkeeper will read all of them. Each list should have one package name per line. Empty lines will be ignored, as will comments starting with '#'. As a special case, keeper lists starting with 'kmod' will be matched against kernel mod packages regardless of kernel version.
+
+
+
+Copyright (c) 2010-2012 Dave Vasilevsky
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

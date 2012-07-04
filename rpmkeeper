@@ -1,0 +1,42 @@
+#!/usr/bin/env python
+# (C) 2011-12 Dave Vasilevsky
+
+import subprocess
+import re
+import os
+
+# Where to find keepers files
+baseDir = os.path.join(os.environ['HOME'], 'keepers')
+
+# Get the leaf packages from rpmorphan
+cmd = subprocess.Popen(['rpmorphan', '-all'], stdout = subprocess.PIPE)
+leaves = {l.rstrip() for l in cmd.stdout.readlines()}
+
+def read_keepers(fname):
+	try:
+		keepers = open(fname).readlines()
+	except IOError:
+		return set()
+	keepers = [re.sub(r'#.*', '', k).strip() for k in keepers]
+	return set(keepers) - set('')
+
+# Read base keepers
+keepers = set()
+kmods = set()
+for name in os.listdir(baseDir):
+	keepersFile = os.path.join(baseDir, name)
+	ks = read_keepers(keepersFile)
+	if re.match('^kmod', name):
+		kmods |= ks
+	else:
+		keepers |= ks
+
+# Special processing for kmods, since they include the kernel name
+kmodRe = re.compile('^kmod-(' + '|'.join(kmods) + ')-')
+
+# Get the leaves that shouldn't be kept
+orphans = [p for p in (leaves - keepers) if not kmodRe.match(p)]
+for l in sorted(orphans):
+	print l
+
+
