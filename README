@@ -1,13 +1,22 @@
 rpmkeeper - Find unused RPM packages
 
+
 rpmkeeper helps you keep your RPM system clean, similarly to debfoster for Debian-based systems. It's easy to install packages that you no longer need, but it's hard to remember which packages these were afterwards. It's even harder to remember what dependencies they brought in.
+
 
 With rpmkeeper, you just maintain a 'keepers' list of the packages you care about. You only need to list leaf packages, not all the libraries they depend on. Running rpmkeeper will list any installed packages that aren't needed for the keepers. You can add these to your keepers list if you still want them, or remove the packages.
 
 A quick way to remove all unkept packages:
 # while yum remove $(rpmkeeper); do true; done
 
+
 You can put one or more keeper lists in your ~/keepers/ directory, and rpmkeeper will read all of them. Each list should have one package name per line. Empty lines will be ignored, as will comments starting with '#'. As a special case, keeper lists starting with 'kmod' will be matched against kernel mod packages regardless of kernel version.
+
+I recommend keeping one 'base' keeper list for the default packages of your distro, and then at least one 'personal' keeper list for your modifications. This makes distro upgrades easier, since you can just replace the 'base' list.
+
+
+To use rpmkeeper you'll need 'rpmorphan' to be installed, it's available in most distributions' repositories.
+
 
 
 
