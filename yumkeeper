@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+# (C) 2011-14 Dave Vasilevsky
+
+import re
+import os
+
+# Get the leaf packages from yum
+import yum
+import logging
+# Suppress plugin loading message
+logging.getLogger("yum.verbose.YumPlugins").setLevel(logging.INFO)
+yb = yum.YumBase()
+leaves = {p.name for p in yb.rpmdb.returnLeafNodes()}
+
+# Where to find keepers files
+baseDir = os.path.join(os.environ['HOME'], 'keepers')
+
+def read_keepers(fname):
+	try:
+		keepers = open(fname).readlines()
+	except IOError:
+		return set()
+	keepers = [re.sub(r'#.*', '', k).strip() for k in keepers]
+	return set(keepers) - set('')
+
+# Read base keepers
+keepers = set()
+kmods = set()
+for name in os.listdir(baseDir):
+	keepersFile = os.path.join(baseDir, name)
+	ks = read_keepers(keepersFile)
+	if re.match('^kmod', name):
+		kmods |= ks
+	else:
+		keepers |= ks
+
+# Special processing for kmods, since they include the kernel name
+kmodRe = re.compile('^kmod-(' + '|'.join(kmods) + ')-')
+
+# Get the leaves that shouldn't be kept
+orphans = [p for p in (leaves - keepers) if not kmodRe.match(p)]
+for l in sorted(orphans):
+	print l
+
+
